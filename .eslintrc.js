@@ -1,22 +1,25 @@
 module.exports = {
   parser: 'babel-eslint',
-  extends: ['airbnb-base', 'eslint:recommended', 'plugin:react/recommended'],
-  plugins: ['import', 'react'],
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+      modules: true
+    }
+  },
+  extends: ['airbnb-base'],
+  plugins: ['import', 'node', 'react-html'],
   env: {
     browser: true,
     node: true,
   },
   settings: {
-    'import/resolver': 'node',
-    react: {
-      version: 'detect',
-    },
+    'import/resolver': 'node'
   },
   rules: {
-    'no-underscore-dangle': 0,
-    indent: ['error', 2],
-    'no-alert': 1,
-    'no-console': 1,
-    'react/jsx-filename-extension': 'off',
+    'import/extensions': ['off', 'never'],
+    // 'meteor' should be listed in the project's dependencies.
+    'import/no-extraneous-dependencies': ['off', 'never'],
+    'import/no-absolute-path': ['off', 'never'],
+    'no-underscore-dangle' : 0,
   },
 };
