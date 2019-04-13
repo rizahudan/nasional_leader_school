@@ -6,11 +6,11 @@ module.exports = {
       modules: true
     }
   },
-  extends: ['airbnb-base'],
-  plugins: ['import', 'node', 'react-html'],
+  extends: ['airbnb-base', 'plugin:react/recommended'],
+  plugins: ['import', 'react', 'meteor'],
   env: {
     browser: true,
-    node: true,
+    meteor: true
   },
   settings: {
     'import/resolver': 'node'
