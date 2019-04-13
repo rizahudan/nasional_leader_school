@@ -6,6 +6,7 @@ module.exports = merge(common, {
   devtool: 'inline-source-map',
   devServer: {
     contentBase: './build',
+    historyApiFallback: true,
     port: 8081,
     open: true,
     proxy: {
