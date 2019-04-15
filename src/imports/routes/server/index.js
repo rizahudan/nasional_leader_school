@@ -1,5 +1,6 @@
-const task = require('./task');
+import task from './task';
 
-module.exports = (app) => {
+const routes = (app) => {
   app.use('/task', task);
 };
+export default routes;

@@ -7,8 +7,8 @@ const API = {
     };
     let result = false;
     try {
-      const response = await axios.post(`http://localhost:8081/${operation}`, data);
-      if (typeof response.status !== 'undefined' && response.status === String(200)) {
+      const response = await axios.post(`/${operation}`, data, option);
+      if (typeof response.status !== 'undefined' && String(response.status) === '200') {
         result = response.data;
       }
     } catch (error) {
@@ -23,7 +23,7 @@ const API = {
     let result = false;
     try {
       const response = await axios.get(`/${operation}`, option);
-      if (typeof response.status !== 'undefined' && response.status === String(200)) {
+      if (typeof response.status !== 'undefined' && String(response.status) === '200') {
         result = response.data;
       }
     } catch (error) {
@@ -38,7 +38,7 @@ const API = {
     let result = false;
     try {
       const response = await axios.put(`/${operation}`, data, option);
-      if (typeof response.status !== 'undefined' && response.status === String(200)) {
+      if (typeof response.status !== 'undefined' && String(response.status) === '200') {
         result = response.data;
       }
     } catch (error) {
@@ -53,7 +53,7 @@ const API = {
     let result = false;
     try {
       const response = await axios.delete(`${operation}`, option);
-      if (typeof response.status !== 'undefined' && response.status === String(200)) {
+      if (typeof response.status !== 'undefined' && String(response.status) === '200') {
         result = response.data;
       }
     } catch (error) {

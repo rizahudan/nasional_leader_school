@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './components/Header';
+import Header from 'imports/ui/components/Header';
 import TaskTable from './components/Tasktable';
 
 export default class Home extends React.Component {

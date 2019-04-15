@@ -13,55 +13,40 @@ import {
   Accordion,
 } from 'semantic-ui-react';
 import RowTask from './RowTask';
+import api from '../../apis/api';
 
 export default class TaskTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
+      modal: {
+        step: false,
+        formStep: -1,
+        detailStep: -1,
+        editStep: false,
+        delStep: false,
+      },
       currentData: {},
       activeIndex: 0,
+      data: [],
     };
 
-    this.data = [
-      {
-        no: 1,
-        task: 'testing app',
-        estimated: 10,
-        remaining: 5,
-        step: 3,
-        start: '20-5-2019',
-        finish: '21-5-2019',
-        status: 'Finish',
-        doneby: 'HUdan',
-      },
-      {
-        no: 2,
-        task: 'testing app',
-        estimated: 10,
-        remaining: 5,
-        step: 3,
-        start: '20-5-2019',
-        finish: '21-5-2019',
-        status: 'Finish',
-        doneby: 'HUdan',
-      },
-      {
-        no: 3,
-        task: 'testing app',
-        estimated: 10,
-        remaining: 5,
-        step: 3,
-        start: '20-5-2019',
-        finish: '21-5-2019',
-        status: 'Finish',
-        doneby: 'HUdan',
-      },
-    ];
+    this.getTask();
 
-    this.open = this.open.bind(this);
     this.close = this.close.bind(this);
     this.onClick = this.onClick.bind(this);
+    this.openFormStep = this.openFormStep.bind(this);
+    this.openDetailStep = this.openDetailStep.bind(this);
+  }
+
+  async getTask() {
+    const response = await api.get('api/task');
+    if (response !== false
+        && typeof response.flag !== 'undefined'
+        && response.flag === true
+    ) {
+      this.setState({ data: response.data });
+    }
   }
 
   newStep = (e, titleProps) => {
@@ -72,52 +57,146 @@ export default class TaskTable extends React.Component {
     this.setState({ activeIndex: newIndex });
   }
 
-  componentDidMount() {
-    fetch('/api/getUsername')
-      .then(res => res.json())
-      .then(user => console.log('user', user));
-    this.result = true;
-  }
-
-  open() {
-    this.setState({ open: true });
+  open(data) {
+    const updateState = {
+      modal: {
+        open: false,
+        editStep: false,
+        delStep: false,
+      },
+    };
+    updateState.modal[data.type] = true;
+    updateState.currentData = data.data;
+    this.setState(updateState);
   }
 
   close() {
-    this.setState({ open: false });
+    const updateState = {
+      modal: {
+        open: false,
+        editStep: false,
+        delStep: false,
+      },
+    };
+    this.setState(updateState);
   }
 
   onClick(data) {
-    console.log('parent');
-    this.setState({ open: true, currentData: data });
+    const updateState = {
+      modal: {
+        open: false,
+        editStep: false,
+        delStep: false,
+      },
+    };
+    updateState.modal[data.type] = true;
+    updateState.currentData = data.data;
+    console.log('update', updateState);
+    this.setState(updateState);
+  }
+
+  openFormStep = (e, titleProps) => {
+    const updateState = this.state.modal;
+    const { index } = titleProps;
+    updateState.formStep = updateState.formStep === index ? -1 : index;
+
+    this.setState(updateState);
+  }
+
+  openDetailStep = (e, titleProps) => {
+    const updateState = this.state.modal;
+    const { index } = titleProps;
+    updateState.detailStep = updateState.detailStep === index ? -1 : index;
+
+    this.setState(updateState);
+  }
+
+  renderStep() {
+    let timeLeft = this.state.currentData.estimate;
+    const page = [];
+    this.state.currentData.steps.map((data, i) => {
+      page.push(
+        <Accordion key={`step-${i}`}>
+          <Accordion.Title
+            active={this.state.modal.formStep === i + 2}
+            index={i + 2}
+            onClick={this.openFormStep}
+          >
+            <Card fluid={true}>
+              <Card.Content>
+                <Grid>
+                  <Grid.Row>
+                    <Grid.Column width={3}>
+                      <h3> STEP {i + 1}</h3>
+                    </Grid.Column>
+                    <Grid.Column width={10}><h3> {data.startDate}</h3></Grid.Column>
+                  </Grid.Row>
+                </Grid>
+              </Card.Content>
+            </Card>
+          </Accordion.Title>
+
+          <Accordion.Content active={this.state.modal.formStep === i + 2}>
+            <Card fluid={true}>
+              <Card.Content>
+                <Grid>
+                  <Grid.Row>
+                    <Grid.Column width={3}>Hours Left</Grid.Column>
+                    <Grid.Column width={1}>:</Grid.Column>
+                    <Grid.Column width={10}>{`${timeLeft - data.hours} from ${timeLeft}`}</Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row>
+                    <Grid.Column width={3}>Detail</Grid.Column>
+                    <Grid.Column width={1}>:</Grid.Column>
+                    <Grid.Column width={10}>
+                      {data.desc}
+                    </Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row>
+                    <Grid.Column width={3}>Deliverable</Grid.Column>
+                    <Grid.Column width={1}>:</Grid.Column>
+                    <Grid.Column width={10}>{data.deliverable}</Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row>
+                    <Grid.Column width={3}>Status</Grid.Column>
+                    <Grid.Column width={1}>:</Grid.Column>
+                    <Grid.Column width={10}>{data.status}</Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row>
+                    <Grid.Column width={3}>Date Finish</Grid.Column>
+                    <Grid.Column width={1}>:</Grid.Column>
+                    <Grid.Column width={10}>{data.endDate}</Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row>
+                    <Grid.Column width={3}>Done By</Grid.Column>
+                    <Grid.Column width={1}>:</Grid.Column>
+                    <Grid.Column width={10}>{data.by}</Grid.Column>
+                  </Grid.Row>
+                </Grid>
+                <div align='right'>
+                  <Button>Edit</Button>
+                  <Button>Delete</Button>
+                </div>
+              </Card.Content>
+            </Card>
+          </Accordion.Content>
+        </Accordion>,
+      );
+      timeLeft -= data.hours;
+      return true;
+    });
+    return page;
   }
 
   renderData() {
-    return this.data.map((data, i) => (
-      <RowTask key={i} data={data} click={this.onClick} />
+    return this.state.data.map((data, i) => (
+      <RowTask key={i} data={data} click={this.onClick} state={this.state} no={i + 1} />
     ));
   }
 
   render() {
-    const { activeIndex } = this.state;
-    const panels = [
-      {
-        key: `panel-1-${new Date().getTime()}`,
-        title: 'tesss',
-        content: 'assasasasasas',
-      },
-      {
-        key: `panel-2-${new Date().getTime()}`,
-        title: 'tesss',
-        content: 'assasasasasas',
-      },
-      {
-        key: `panel-3-${new Date().getTime()}`,
-        title: 'tesss',
-        content: 'assasasasasas',
-      }
-    ]
-
+    const { formStep } = this.state.modal;
+    console.log('render', this.state.currentData);
     this.page = (
       <div>
         <div className="ui container">
@@ -149,111 +228,99 @@ export default class TaskTable extends React.Component {
           </div>
         </div>
 
-        {(this.state.open
-          ? <Modal open={this.state.open} onClose={this.close}>
+        {(this.state.modal.step
+          ? <Modal open={this.state.modal.step} onClose={this.close}>
               <Modal.Header>Step Detail</Modal.Header>
               <Modal.Content>
                 <Modal.Description>
-                  <Grid divided='vertically'>
-                    <Grid.Row columns={2}>
-                      <Grid.Column width='12'>
-                        <Header><h1>{this.state.currentData.task}</h1></Header>
-                        <p>Estimate {this.state.currentData.estimated} Hours - {this.state.currentData.remaining} Hours Left</p>
-                      </Grid.Column>
-                      <Grid.Column width='3' floated="right">
-                        <Button icon onClick={this.newStep}>
-                          <Icon name='add' /> New Step
-                        </Button>
-                      </Grid.Column>
-                    </Grid.Row>
-                  </Grid>
-
-                  <Accordion defaultActiveIndex={[0, 2]} panels={panels} exclusive={false} fluid />
+                  <Accordion>
+                    <Accordion.Title active={formStep === 0} index={0} onClick={this.openFormStep}>
+                      <Grid divided='vertically'>
+                        <Grid.Row columns={2}>
+                          <Grid.Column width='12'>
+                            <Header><h1>{this.state.currentData.task}</h1></Header>
+                              <p>
+                                {`Estimate ${this.state.currentData.estimate} Hours - ${this.state.currentData.estimate - this.state.currentData.hours} Hours Left`}
+                              </p>
+                          </Grid.Column>
+                          <Grid.Column width='3' floated="right">
+                            <Button icon onClick={this.newStep}>
+                              <Icon name='add' /> New Step
+                            </Button>
+                          </Grid.Column>
+                        </Grid.Row>
+                      </Grid>
+                    </Accordion.Title>
+                    <Accordion.Content active={formStep === 0}>
+                      <Card fluid={true}>
+                        <Card.Content>
+                          <Grid>
+                            <Grid.Row>
+                              <Grid.Column>
+                                <h3> STEP {this.state.currentData.steps.length + 1} </h3>
+                              </Grid.Column>
+                            </Grid.Row>
+                          </Grid>
+                        </Card.Content>
+                        <Card.Content>
+                        <Form>
+                          <Form.Group widths='equal'>
+                            <Form.Field control={Input} label='Date' id='date' />
+                            <Form.Field control={Input} label='Hours' id='hours' />
+                          </Form.Group>
+                          <Form.Field control={TextArea} label='Detail' id='detail'/>
+                          <Form.Field control={Input} label='Deliverable' id='deliverable' />
+                          <Form.Field control={Input} label='Done by' id='by' />
+                          <Form.Field floated='right' control={Button}>Save</Form.Field>
+                        </Form>
+                        </Card.Content>
+                      </Card>
+                    </Accordion.Content>
+                  </Accordion>
                 </Modal.Description>
-
-                <Accordion>
-                  <Accordion.Title active={activeIndex === 0} index={0}>
-                    <Icon name='dropdown' />
-                    What is a dog?
-                  </Accordion.Title>
-                  <Accordion.Content active={activeIndex === 0}>
-                    <Card fluid='true'>
-                      <Card.Content>
-                        <Grid>
-                          <Grid.Row>
-                            <Grid.Column><h3> STEP ... </h3></Grid.Column>
-                          </Grid.Row>
-                        </Grid>
-                      </Card.Content>
-                      <Card.Content>
-                      <Form>
-                        <Form.Group widths='equal'>
-                          <Form.Field control={Input} label='Date' id='date' />
-                          <Form.Field control={Input} label='Hours' id='hours' />
-                        </Form.Group>
-                        <Form.Field control={TextArea} label='Detail' id='detail'/>
-                        <Form.Field control={Input} label='Deliverable' id='deliverable' />
-                        <Form.Field control={Input} label='Done by' id='by' />
-                        <Form.Field floated='right' control={Button}>Save</Form.Field>
-                      </Form>
-                      </Card.Content>
-                    </Card>
-                  </Accordion.Content>
-                </Accordion>
-
-                <Card fluid='true'>
-                  <Card.Content>
-                    <Grid>
-                      <Grid.Row>
-                        <Grid.Column width={3}><h3> STEP {this.state.currentData.no}</h3></Grid.Column>
-                        <Grid.Column width={10}><h3> {this.state.currentData.start}</h3></Grid.Column>
-                      </Grid.Row>
-                    </Grid>
-                  </Card.Content>
-                  <Card.Content>
-                    <Grid>
-                      <Grid.Row>
-                        <Grid.Column width={3}>Hours Left</Grid.Column>
-                        <Grid.Column width={1}>:</Grid.Column>
-                        <Grid.Column width={10}>{this.state.currentData.remaining}</Grid.Column>
-                      </Grid.Row>
-                      <Grid.Row>
-                        <Grid.Column width={3}>Detail</Grid.Column>
-                        <Grid.Column width={1}>:</Grid.Column>
-                        <Grid.Column width={10}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                        </Grid.Column>
-                      </Grid.Row>
-                      <Grid.Row>
-                        <Grid.Column width={3}>Deliverable</Grid.Column>
-                        <Grid.Column width={1}>:</Grid.Column>
-                        <Grid.Column width={10}>{this.state.currentData.task}</Grid.Column>
-                      </Grid.Row>
-                      <Grid.Row>
-                        <Grid.Column width={3}>Status</Grid.Column>
-                        <Grid.Column width={1}>:</Grid.Column>
-                        <Grid.Column width={10}>{this.state.currentData.status}</Grid.Column>
-                      </Grid.Row>
-                      <Grid.Row>
-                        <Grid.Column width={3}>Date Finish</Grid.Column>
-                        <Grid.Column width={1}>:</Grid.Column>
-                        <Grid.Column width={10}>{this.state.currentData.start}</Grid.Column>
-                      </Grid.Row>
-                      <Grid.Row>
-                        <Grid.Column width={3}>Done By</Grid.Column>
-                        <Grid.Column width={1}>:</Grid.Column>
-                        <Grid.Column width={10}>{this.state.currentData.doneby}</Grid.Column>
-                      </Grid.Row>
-                    </Grid>
-                    <div align='right'>
-                      <Button>Edit</Button>
-                      <Button>Delete</Button>
-                    </div>
-                  </Card.Content>
-                </Card>
+                {this.renderStep()}
               </Modal.Content>
             </Modal>
           : '')}
+
+        {(this.state.editStep
+          ? <Modal open={this.state.openEdit} onClose={this.closeEdit}>
+              <Modal.Header>Edit Task</Modal.Header>
+              <Modal.Content>
+                <Form>
+                  <Form.Field control={Input} label='Task' id='task' />
+                  <Form.Group widths='equal'>
+                    <Form.Field control={Input} label='Date' id='date' />
+                    <Form.Field control={Input} label='Estimate Hours' id='estimate' />
+                  </Form.Group>
+                  <Button floated='right' type='submit' primary>Save</Button>
+                </Form>
+              </Modal.Content>
+              <Modal.Actions>
+
+              </Modal.Actions>
+            </Modal>
+          : '')}
+
+          {(this.state.delStep
+            ? <Modal open={this.state.openDelete} onClose={this.closeDelete}>
+                <Header icon='archive' content='Are you sure to delete this data?' />
+                <Modal.Content>
+                  <p>
+                    This task data will remove from database.
+                  </p>
+                </Modal.Content>
+                <Modal.Actions>
+                  <Button basic color='red'>
+                    <Icon name='remove' /> No
+                  </Button>
+                  <Button basic primary>
+                    <Icon name='checkmark' /> Yes
+                  </Button>
+                </Modal.Actions>
+              </Modal>
+            : '')}
+
       </div>
     );
     return this.page;
