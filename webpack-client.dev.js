@@ -6,7 +6,7 @@ const common = require('./webpack.common.js');
 module.exports = merge(common, {
   mode: 'development',
   devtool: 'inline-source-map',
-  entry: ['babel-polyfill', './src/client/index.js'],
+  entry: ['./src/client/index.js'],
   devServer: {
     contentBase: './build/client',
     historyApiFallback: true,
