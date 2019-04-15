@@ -21,5 +21,6 @@ module.exports = {
     'import/no-extraneous-dependencies': ['off', 'never'],
     'import/no-absolute-path': ['off', 'never'],
     'no-underscore-dangle' : 0,
+    'linebreak-style': ["error", "windows"]
   },
 };
