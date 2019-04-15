@@ -23,6 +23,7 @@ module.exports = {
     'import/no-extraneous-dependencies': ['off', 'never'],
     'import/no-absolute-path': ['off', 'never'],
     'no-underscore-dangle' : 0,
-    'module-resolver/use-alias': 2
+    'module-resolver/use-alias': 2,
+    'react/prop-types': 1
   },
 };

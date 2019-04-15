@@ -15,9 +15,7 @@ module.exports = merge(common, {
     hot: true,
     watchContentBase: true,
   },
-  entry: {
-    app: './src/server/index.js',
-  },
+  entry: ['babel-polyfill', './src/server/index.js'],
   output: {
     path: path.resolve(__dirname, 'build/server'),
     publicPath: '/',
