@@ -13,9 +13,33 @@ const Users = new db.Schema({
     type: db.Schema.ObjectId,
     required: true,
   },
+  startDate: {
+    type: Date,
+    required: true,
+  },
+  endDate: {
+    type: Date,
+    required: false,
+  },
   desc: {
     type: String,
     required: true,
+  },
+  by: {
+    type: String,
+    required: true,
+  },
+  deliverable: {
+    type: String,
+  },
+  hours: {
+    type: Number,
+    default: 0,
+  },
+  // pending, process, finish
+  status: {
+    type: String,
+    default: 'pending',
   },
 }, {
   versionKey: false,
