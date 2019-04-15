@@ -5,19 +5,19 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "client": "webpack-dev-server --open --config webpack.dev.js",
-    "server": "nodemon src/server/index.js",
+    "client": "webpack-dev-server --config webpack-client.dev.js",
+    "server": "webpack --watch --config webpack-server.dev.js",
     "format": "prettier --write \"src/**/*.js\"",
     "eslint-fix": "eslint --fix \"src/**/*.js\"",
-    "build": "webpack --config webpack.prod.js",
+    "build": "webpack --config webpack-client.prod.js",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "Hudan Muhammad Riza & Muhammad Firdaus Maulana",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
+    "babel-polyfill": "^6.26.0",
     "body-parser": "^1.18.3",
-    "clean-webpack-plugin": "^2.0.1",
     "express": "^4.16.4",
     "history": "^4.9.0",
     "html-webpack-plugin": "^3.2.0",
@@ -29,6 +29,7 @@
     "webpack-merge": "^4.2.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.4.3",
     "@babel/core": "^7.4.3",
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.4.3",
@@ -36,20 +37,24 @@
     "@babel/preset-react": "^7.0.0",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
+    "babel-plugin-module-resolver": "^3.2.0",
+    "clean-webpack-plugin": "^2.0.1",
     "concurrently": "^4.1.0",
     "css-loader": "^2.1.1",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.0",
-    "eslint-import-resolver-node": "^0.3.2",
+    "eslint-import-resolver-babel-module": "^5.0.1",
     "eslint-loader": "^2.1.2",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-meteor": "^5.1.0",
+    "eslint-plugin-module-resolver": "^0.8.0",
     "eslint-plugin-react": "^7.12.4",
-    "nodemon": "^1.18.11",
+    "nodemon-webpack-plugin": "^4.0.8",
     "prettier": "^1.16.4",
     "style-loader": "^0.23.1",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0",
-    "webpack-dev-server": "^3.3.1"
+    "webpack-dev-server": "^3.3.1",
+    "webpack-node-externals": "^1.7.2"
   }
 }

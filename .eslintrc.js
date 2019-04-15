@@ -7,13 +7,15 @@ module.exports = {
     }
   },
   extends: ['airbnb-base', 'plugin:react/recommended'],
-  plugins: ['import', 'react', 'meteor'],
+  plugins: ['import', 'react', 'meteor', 'module-resolver'],
   env: {
     browser: true,
     meteor: true
   },
   settings: {
-    'import/resolver': 'node'
+    'import/resolver': {
+      "babel-module": {}
+    }
   },
   rules: {
     'import/extensions': ['off', 'never'],
@@ -21,5 +23,6 @@ module.exports = {
     'import/no-extraneous-dependencies': ['off', 'never'],
     'import/no-absolute-path': ['off', 'never'],
     'no-underscore-dangle' : 0,
+    'module-resolver/use-alias': 2
   },
 };
