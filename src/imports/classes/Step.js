@@ -39,6 +39,7 @@ const Users = new db.Schema({
   // pending, process, finish
   status: {
     type: String,
+    enum: ['pending', 'process', 'finish'],
     default: 'pending',
   },
 }, {
