@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const logger = require('morgan');
 const { spawnSync, spawn } = require('child_process');
 const fs = require('fs');
+const os = require('os');
 
 const mongod = (mongoDirPath) => {
   const mongoServer = spawn(`${mongoDirPath}/mongodb/bin/mongod --dbpath ${mongoDirPath}/data`, { shell: true, windowsHide: true });
@@ -46,6 +47,7 @@ const mongod = (mongoDirPath) => {
   });
 };
 
+console.log(process.platform, os.arch());
 // const p = __dirname;
 // const chmod = spawn()
 
@@ -114,6 +116,14 @@ const prepareMongo = () => {
           spawnSync('tar -zxvf mongodb-osx-ssl-x86_64-4.0.9.tgz', { shell: true, windowsHide: true });
           spawnSync('cp -R -n mongodb-osx-x86_64-4.0.9/ mongo/mongodb', { shell: true, windowsHide: true });
           spawnSync('rm -rf mongodb-osx-ssl-x86_64-4.0.9.tgz mongodb-osx-x86_64-4.0.9', { shell: true, windowsHide: true });
+          break;
+        case 'win32':
+          switch (process.arch) {
+            case 'x64':
+              break;
+            default:
+              console.log('Windows not supported');
+          }
           break;
         default:
           console.log('OS not supportted');
