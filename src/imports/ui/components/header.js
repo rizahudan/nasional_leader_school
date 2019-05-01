@@ -7,7 +7,11 @@ import {
   Form,
   Input,
   TextArea,
+  Card,
+  Label,
+  Icon,
 } from 'semantic-ui-react';
+import DatePicker from 'react-datepicker';
 import api from '../../apis/api';
 
 export default class Header extends React.Component {
@@ -16,6 +20,7 @@ export default class Header extends React.Component {
     this.state = {
       open: false,
       currentData: {},
+      startDate: new Date(),
     };
 
     this.open = this.open.bind(this);
@@ -45,7 +50,7 @@ export default class Header extends React.Component {
     const data = {
       task: event.target.task.value,
       date: new Date(),
-      estimate: event.target.estimate.value,
+      estimate: parseInt(event.target.estimate.value, 10),
       detail: event.target.detail.value,
       by: event.target.detail.value,
     };
@@ -53,8 +58,8 @@ export default class Header extends React.Component {
     (async () => {
       const response = await api.post('api/task', data);
       if (response !== false
-          && typeof response.flag !== 'undefined'
-          && response.flag === true
+          && typeof response.status !== 'undefined'
+          && response.status === 'success'
       ) {
         console.log('saveTask sukses');
       }
@@ -64,7 +69,10 @@ export default class Header extends React.Component {
   render() {
     this.data = (
       <div>
-        <Menu pointing secondary>
+        <Menu pointing inverted>
+          <Label className="item">
+            <Icon name="server" />
+          </Label>
           <Dropdown className="active item" text='New'>
             <Dropdown.Menu>
               <Dropdown.Item onClick={this.onClick} text='Add Task' />
@@ -75,18 +83,22 @@ export default class Header extends React.Component {
         <Modal open={this.state.open} onClose={this.close}>
           <Modal.Header>New Task</Modal.Header>
           <Modal.Content>
-            <Form onSubmit={this.handleForm}>
-              <Form.Field required control={Input} label='Task' id='task' className='task' />
-              <Form.Group widths='equal'>
-                <Form.Field required control={Input} label='Date' id='date' className='date' />
-                <Form.Field required control={Input} label='Estimate Hours' id='estimate' className='estimate' />
-              </Form.Group>
-              <Form.Field required control={TextArea} label='Detail' id='detail' className='detail' />
-              <Form.Field required control={Input} label='By' id='by' className='by' />
-              <Modal.Actions>
-                <Button type='submit'>Submit</Button>
-              </Modal.Actions>
-            </Form>
+            <Card fluid={true}>
+              <Card.Content>
+                <Form onSubmit={this.handleForm}>
+                  <Form.Field required control={Input} label='Task' id='task'/>
+                  <Form.Group widths='equal'>
+                    <Form.Field required control={Input} label='Date' id='date'>
+                      <DatePicker className='react-datepicker-manager' selected={this.state.startDate} onChange={this.handleChange} />
+                    </Form.Field>
+                    <Form.Field required control={Input} type='number' label='Estimate Hours' id='estimate' />
+                  </Form.Group>
+                  <Form.Field required control={TextArea} label='Detail' id='detail' />
+                  <Form.Field required control={Input} label='By' id='by' />
+                  <Form.Field floated='right' primary control={Button}>Save</Form.Field>
+                </Form>
+              </Card.Content>
+            </Card>
           </Modal.Content>
         </Modal>
 

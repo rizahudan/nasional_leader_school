@@ -5,3 +5,15 @@ header {
 body {
   
 }
+
+.react-datepicker__input-container {
+  display: block!important;
+}
+
+.react-datepicker__input-container input {
+  width: 100%!important;
+}
+
+.react-datepicker-wrapper {
+  width: 100%;
+}
