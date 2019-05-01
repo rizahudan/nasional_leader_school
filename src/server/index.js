@@ -7,7 +7,6 @@ const bodyParser = require('body-parser');
 const logger = require('morgan');
 const { spawnSync, spawn } = require('child_process');
 const fs = require('fs');
-const os = require('os');
 
 const mongod = (mongoDirPath) => {
   const mongoServer = spawn(`${mongoDirPath}/mongodb/bin/mongod --dbpath ${mongoDirPath}/data`, { shell: true, windowsHide: true });
@@ -47,7 +46,6 @@ const mongod = (mongoDirPath) => {
   });
 };
 
-console.log(process.platform, os.arch());
 // const p = __dirname;
 // const chmod = spawn()
 
@@ -110,6 +108,8 @@ const prepareMongo = () => {
     // url windows https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-4.0.9-signed.msi
     if (!fs.existsSync(`${mongoDirPath}/mongodb`)) {
       console.log('Downloading mongo');
+      let rawPath = null;
+      let path = '';
       switch (process.platform) {
         case 'darwin':
           spawnSync('curl -O https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-4.0.9.tgz', { shell: true, windowsHide: true });
@@ -120,6 +120,9 @@ const prepareMongo = () => {
         case 'win32':
           switch (process.arch) {
             case 'x64':
+              rawPath = spawnSync('echo %cd%', { shell: true, windowsHide: true });
+              path = Buffer.from(rawPath.stdout).toString('utf-8');
+              spawnSync(`Invoke-WebRequest -Uri https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-4.0.9-signed.msi -OutFile ${path}\\mongo`, { shell: true, windowsHide: true });
               break;
             default:
               console.log('Windows not supported');
