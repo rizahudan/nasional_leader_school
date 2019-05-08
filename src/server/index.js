@@ -122,8 +122,11 @@ const prepareMongo = () => {
             case 'x64':
               rawPath = spawnSync('echo %cd%', { shell: true, windowsHide: true });
               path = Buffer.from(rawPath.stdout).toString('utf-8');
-              spawnSync(`Invoke-WebRequest -Uri https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-4.0.9-signed.msi -OutFile ${path}\\mongo`, { shell: true, windowsHide: true });
-              break;
+              // let test = spawnSync(`Invoke-WebRequest -Uri "https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-ssl-4.0.9-signed.msi" -OutFile "$env:temp\mongodb-win32-x86_64-2008plus-ssl-4.0.9-signed.msi"`, { shell: true, windowsHide: true });
+              // console.log('test', Buffer.from(test.stdout).toString('utf-8'));
+              spawnSync(`msiexec.exe /l*v mdbinstall.log  /qb /i mongodb-win32-x86_64-2008plus-ssl-4.0.9-signed.msi ^
+              INSTALLLOCATION="C:\\MongoDB\\Server\\4.0\"`, { shell: true, windowsHide: true });
+              break;  
             default:
               console.log('Windows not supported');
           }
