@@ -25,6 +25,5 @@ module.exports = {
     'no-underscore-dangle' : 0,
     'module-resolver/use-alias': 2,
     'react/prop-types': 1,
-    'linebreak-style': ['error', 'windows'],
   },
 };

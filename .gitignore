@@ -1,6 +1,6 @@
 node_modules/
 dist/
 build/
+mongo/
 .vscode/
-.DS_Store
 .DS_Store
